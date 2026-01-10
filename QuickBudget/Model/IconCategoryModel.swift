@@ -17,3 +17,4 @@ struct IconCategoryModel: Identifiable, Codable {
         self.name = name
     }
 }
+
