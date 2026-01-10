@@ -34,7 +34,7 @@ struct AddFinanceView: View {
     @Query var cashFlow: [CashFlowModel]
     @Environment(\.modelContext) var context
     @EnvironmentObject var settings: SettingsViewModel
-    @EnvironmentObject var cashViewModel: CashFlowViewModel
+   // @EnvironmentObject var cashViewModel: CashFlowViewModel
 
     var colorAmountPicker: Color {
         switch pickerSelectionType {
@@ -268,7 +268,7 @@ struct AddFinanceView: View {
     AddFinanceView()
         .modelContainer(for: CashFlowModel.self, inMemory: true)
         .environmentObject(SettingsViewModel())
-        .environmentObject(CashFlowViewModel())
+       // .environmentObject(CashFlowViewModel())
 }
 
 

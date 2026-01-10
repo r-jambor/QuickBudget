@@ -24,7 +24,7 @@ struct EditFinanceView: View {
     @FocusState private var keyboardFocus: Bool
     
     @EnvironmentObject var settings: SettingsViewModel
-    @EnvironmentObject var cashViewModel: CashFlowViewModel
+  //  @EnvironmentObject var cashViewModel: CashFlowViewModel
     
     init(cashFlow: CashFlowModel) {
         self._cashFlow = Bindable(wrappedValue: cashFlow)
@@ -115,8 +115,8 @@ struct EditFinanceView: View {
                 ) { category in
 
                     // PŘEDVYPLNĚNÍ UI
-                    cashViewModel.selectedIcon = category.icon
-                    cashViewModel.categoryName = category.name
+                //    cashViewModel.selectedIcon = category.icon
+                //    cashViewModel.categoryName = category.name
 
                     // PŘEPNUTÍ DO EDIT REŽIMU
                 //    editingCategoryID = category.id
@@ -214,7 +214,7 @@ struct EditFinanceView: View {
 #Preview {
     EditFinanceView(cashFlow: CashFlowModel(amount: 3.0, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")))
         .environmentObject(SettingsViewModel())
-        .environmentObject(CashFlowViewModel())
+      //  .environmentObject(CashFlowViewModel())
 }
 
 

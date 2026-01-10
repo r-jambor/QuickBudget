@@ -30,7 +30,7 @@ struct QuickBudgetApp: App {
 struct QuickBudgetApp: App {
 
     @StateObject private var settings = SettingsViewModel()
-    @StateObject private var cashFlowViewModel = CashFlowViewModel()
+  //  @StateObject private var cashFlowViewModel = CashFlowViewModel()
 
     let container: ModelContainer
 
@@ -60,7 +60,7 @@ struct QuickBudgetApp: App {
             MainView()
                 .environment(\.modelContext, container.mainContext)
                 .environmentObject(settings)
-                .environmentObject(cashFlowViewModel)
+          //      .environmentObject(cashFlowViewModel)
                 .preferredColorScheme(.dark)
         }
     }

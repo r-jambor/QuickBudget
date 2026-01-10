@@ -123,5 +123,5 @@ struct SettingsView: View {
     SettingsView()
         .environmentObject(SettingsViewModel())
         .modelContainer(for: CashFlowModel.self, inMemory: true)
-        .environmentObject(CashFlowViewModel())
+       // .environmentObject(CashFlowViewModel())
 }

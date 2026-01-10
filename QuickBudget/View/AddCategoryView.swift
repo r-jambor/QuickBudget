@@ -112,5 +112,5 @@ struct AddCategoryView: View {
 #Preview {
    // @State var selectedIcon: String = ""
     AddCategoryView()
-        .environmentObject(CashFlowViewModel())
+      //  .environmentObject(CashFlowViewModel())
 }

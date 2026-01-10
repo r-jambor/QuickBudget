@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CashFlowViewModel: ObservableObject {
+/*class CashFlowViewModel: ObservableObject {
     // statická seznam ikon a kategorií
     var iconCategory: [(icon: String, name: String)] = [
         
@@ -16,7 +16,7 @@ class CashFlowViewModel: ObservableObject {
     //variables selected by user
     @Published var selectedIcon: String = ""
     @Published var categoryName: String = ""
-    @Published var iconCategoryModel: [IconCategoryModel] = []
+   // @Published var iconCategoryModel: [IconCategoryModel] = []
    
     
     
@@ -24,8 +24,8 @@ class CashFlowViewModel: ObservableObject {
            guard !selectedIcon.isEmpty,
                  !categoryName.isEmpty else { return }
 
-           let newCategory = IconCategoryModel(icon: selectedIcon, name: categoryName)
-           iconCategoryModel.append(newCategory)
+        /*   let newCategory = IconCategoryModel(icon: selectedIcon, name: categoryName)
+           iconCategoryModel.append(newCategory)*/
            
            saveIconCategories()
 
@@ -71,3 +71,4 @@ class CashFlowViewModel: ObservableObject {
         
     }
 }
+*/

@@ -97,5 +97,5 @@ struct MainView: View {
     MainView()
         .modelContainer(for: CashFlowModel.self, inMemory: true)
         .environmentObject(SettingsViewModel())
-        .environmentObject(CashFlowViewModel())
+        //.environmentObject(CashFlowViewModel())
 }
