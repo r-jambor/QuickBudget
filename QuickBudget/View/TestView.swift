@@ -25,7 +25,7 @@ struct TestView: View {
                 
                 Tab("DashBoard", systemImage: "chart.pie") {
                     ZStack {
-                        Color.red.ignoresSafeArea()
+                        
                         VStack {
                             DashboardChartView(selectedMonth: Date())
                             Spacer()
@@ -40,7 +40,7 @@ struct TestView: View {
                 }
                 Tab("Add", systemImage: "plus.circle") {
                     ZStack{
-                        Color.red.ignoresSafeArea()
+                        
                         AddFinanceView()
                     }
                 
