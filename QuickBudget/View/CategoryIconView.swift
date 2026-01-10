@@ -6,29 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CategoryIconView: View {
-    
-    
-    @EnvironmentObject var cashViewModel: CashFlowViewModel
-  //  @Bindable var cashFlow: CashFlowModel
-    
+
+    @Query(sort: \CategoryModel.name)
+    private var categories: [CategoryModel]
+
+    @Environment(\.modelContext)
+    private var context
+    //@Binding var selectedCategory: CategoryModel?
     @Binding var selectedImage: String
     @Binding var selectedImageName: String
-    
-    @Environment(\.dismiss) private var dismiss
-    
     @Binding var contextMenuOn: Bool
-    
-    @State private var showEditCategory = false
-   // @State private var editingCategory: CategoryModel?
-    
-    let onEdit: (IconCategoryModel) -> Void
-    
+
+    let onEdit: (CategoryModel) -> Void
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
-                ForEach(cashViewModel.iconCategoryModel) { item in
+                ForEach(categories) { item in
                     VStack {
                         Image(systemName: item.icon)
                             .resizable()
@@ -37,18 +34,25 @@ struct CategoryIconView: View {
                             .padding(10)
                             .background(
                                 Circle()
-                                    .fill(selectedImage == item.icon ? Color.blue.opacity(0.2): Color.gray.opacity(0.1))
+                                    .fill(selectedImage == item.icon
+                                          ? Color.blue.opacity(0.2)
+                                          : Color.gray.opacity(0.1))
                             )
                             .overlay(
-                                Circle().stroke(selectedImage == item.icon ? Color.blue : .clear, lineWidth: 2)
-                                                    )
+                                Circle().stroke(
+                                    selectedImage == item.icon
+                                    ? Color.blue
+                                    : .clear,
+                                    lineWidth: 2
+                                )
+                            )
                             .onTapGesture {
                                 selectedImage = item.icon
                                 selectedImageName = item.name
+                                onEdit(item)
                             }
                             .contextMenu {
                                 if contextMenuOn {
-
                                     Button {
                                         onEdit(item)
                                     } label: {
@@ -56,13 +60,14 @@ struct CategoryIconView: View {
                                     }
 
                                     Button(role: .destructive) {
-                                        cashViewModel.delete(item: item)
+                                        context.delete(item)
+                                        
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
                             }
-                        
+
                         Text(item.name)
                             .font(.caption)
                     }
@@ -70,8 +75,6 @@ struct CategoryIconView: View {
             }
             .padding(.horizontal)
         }
-        
-     
     }
 }
 
@@ -80,7 +83,9 @@ struct CategoryIconView: View {
     @State var selcetedImage = ""
     @State var selcetedImageName = ""
     @State var contextMenuOn: Bool = true
-    CategoryIconView(selectedImage: $selcetedImage, selectedImageName: $selcetedImageName, contextMenuOn: $contextMenuOn, onEdit: IconCategoryModel(icon: "", name: ""))
+    CategoryIconView(selectedImage: $selcetedImage, selectedImageName: $selcetedImageName, contextMenuOn: $contextMenuOn, onEdit: {_ in })
         .environmentObject(CashFlowViewModel())
 }
+
 */
+

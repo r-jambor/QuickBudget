@@ -80,11 +80,11 @@ struct MainView: View {
                     }
                 }
             }
-            //   .toolbarBackground(.hidden, for: .navigationBar)
+            
         }
         
         
-        // .ignoresSafeArea(edges: .top)
+        
     }
     
 }

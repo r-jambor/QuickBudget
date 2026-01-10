@@ -33,7 +33,7 @@ struct DashboardChartView: View {
   /*  var sampleData: [CashFlowModel] = [
         CashFlowModel(amount: 100.00, date: .now, type: "Expenses", icon: "car.circle", note: ""),
         CashFlowModel(amount: 200.00, date: .now, type: "Savings", icon: "car.circle", note: ""),
-        CashFlowModel(amount: 300.00, date: .now, type: "Funds", icon: "car.circle", note: "")
+        CashFlowModel(amount: 300.00, date: .now, type: "Income", icon: "car.circle", note: "")
     ]*/
     
     var body: some View {
@@ -59,13 +59,13 @@ struct DashboardChartView: View {
             .chartForegroundStyleScale([
                 "Expenses": .red,
                 "Savings": .orange,
-                "Funds": .green
+                "Income": .green
             ])
             .frame(width: 400, height: 350)
             TabView{
                 TotalExpanses(selectedMonth: selectedMonth)
                 TotalSavings(selectedMonth: selectedMonth)
-                TotalFunds(selectedMonth: selectedMonth)
+                TotalIncome(selectedMonth: selectedMonth)
             }
             .background(.clear)
             .frame(width: 215, height: 270)
@@ -104,7 +104,7 @@ struct TotalExpanses: View {
                 .lineLimit(1)
                 .font(.largeTitle)
             
-            Text("Your expenses this month")
+            Text("Your income this month")
         }
     }
 }
@@ -136,7 +136,7 @@ struct TotalSavings: View {
     }
 }
 //--------------------------------------------------------
-struct TotalFunds: View {
+struct TotalIncome: View {
     @Query var cashFlow: [CashFlowModel]
     @Environment(\.modelContext) private var context
     @EnvironmentObject var settings: SettingsViewModel
@@ -146,16 +146,16 @@ struct TotalFunds: View {
 
     var body: some View {
         
-        let totalFunds  = viewModel.total(for: "Funds", in: selectedMonth, from: cashFlow)
+        let totalIncome = viewModel.total(for: "Income", in: selectedMonth, from: cashFlow)
         
         VStack {
-            Text("\(totalFunds, format: .currency(code: settings.currencyCode))")
+            Text("\(totalIncome, format: .currency(code: settings.currencyCode))")
                 .frame(width: 200, height: 70)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
                 .font(.largeTitle)
             
-            Text("Your funds this month")
+            Text("Your income this month")
         }
     }
 }

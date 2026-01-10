@@ -25,9 +25,9 @@ struct MonthDetailView: View {
         transactions.filter { $0.type == "Savings" }
     }
     
-    //filter for the funds
-    var fundsTransactions: [CashFlowModel] {
-        transactions.filter { $0.type == "Funds" }
+    //filter for the income
+    var incomeeTransactions: [CashFlowModel] {
+        transactions.filter { $0.type == "Income" }
     }
     
     
@@ -60,7 +60,7 @@ struct MonthDetailView: View {
                  Text("Savings: \(savingsTransactions.map(\.amount).reduce(0, +), format: .currency(code: settings.currencyCode))")
                  
                  
-                 Text("Funds: \(fundsTransactions.map(\.amount).reduce(0, +), format: .currency(code: settings.currencyCode))")*/
+                 Text("Income: \(IncomeTransactions.map(\.amount).reduce(0, +), format: .currency(code: settings.currencyCode))")*/
                 
                 
                 
@@ -69,7 +69,7 @@ struct MonthDetailView: View {
                     
                     ForEach(transactions) { item in
                         Section{
-                        NavigationLink(destination: AmountDetailView(cashFlow: item)) {
+                        NavigationLink(destination: EditFinanceView(cashFlow: item)) {
                             
                                 HStack{
                                    // Image(systemName: item.iconPicture)

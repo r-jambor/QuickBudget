@@ -19,7 +19,7 @@ struct HistoryView: View {
             groupByMonth(cashFlow)
         }
     var sample: [CashFlowModel] = [CashFlowModel(amount: 3000, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")),
-                                   CashFlowModel(amount: 30, date: .now, type: "Funds", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")),
+                                   CashFlowModel(amount: 30, date: .now, type: "Income", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")),
                                    CashFlowModel(amount: 30, date: .now, type: "Savings", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: ""))]
     
     var groupedSample: [String: [CashFlowModel]] {
@@ -27,7 +27,7 @@ struct HistoryView: View {
         }
     
     
-    func totals(for month: String) -> (expenses: Double, savings: Double, funds: Double) {
+    func totals(for month: String) -> (expenses: Double, savings: Double, income: Double) {
         let items = grouped[month] ?? []
         
         let expenses = items
@@ -40,12 +40,12 @@ struct HistoryView: View {
             .map { $0.amount }
             .reduce(0, +)
         
-        let funds = items
-            .filter { $0.type == "Funds" }
+        let income = items
+            .filter { $0.type == "Income" }
             .map { $0.amount }
             .reduce(0, +)
         
-        return (expenses, savings, funds)
+        return (expenses, savings, income)
     }
     
     var body: some View {
@@ -70,7 +70,7 @@ struct HistoryView: View {
                                     Text(month)
                                         .font(.headline)
                                     Spacer()
-                                    var balance = t.funds - t.expenses - t.savings
+                                    var balance = t.income - t.expenses - t.savings
                                     var balanceColor: Color {
                                         if balance > 0 {
                                             return .green
@@ -97,7 +97,7 @@ struct HistoryView: View {
                                                 .minimumScaleFactor(0.5)
                                         }
                                         
-                                        Text(t.funds, format: .currency(code: settings.currencyCode).precision(.fractionLength(0)))
+                                        Text(t.income, format: .currency(code: settings.currencyCode).precision(.fractionLength(0)))
                                             
                                             .font(.title3)
                                             .bold()

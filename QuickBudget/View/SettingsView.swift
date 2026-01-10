@@ -6,27 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
-    
+
     let gradientColors: [Color] = [
         .gradientTop,
         .gradientBottom
     ]
-    @EnvironmentObject var cashViewModel: CashFlowViewModel
-  //  @State var categorySheetOn = false
+
+    @EnvironmentObject var settings: SettingsViewModel
+
     @State private var selectedImage: String = ""
     @State private var selectedImageName: String = ""
     @State private var contextMenuOn = true
-    @EnvironmentObject var settings: SettingsViewModel
-  //  @State private var isEditing = false
-   // @State private var editingCategoryID: UUID?
-    
+    @State var selectedCategory: CategoryModel?  
     @State private var sheetMode: CategorySheetMode?
-    
+
     enum CategorySheetMode: Identifiable {
         case add
-        case edit(IconCategoryModel)
+        case edit(CategoryModel)
 
         var id: String {
             switch self {
@@ -37,75 +36,66 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     var body: some View {
-        ZStack{
-            
-                
-                
-                LinearGradient(
-                    colors: gradientColors,
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                Form {
-                    Section {
-                        VStack{
-                            Toggle(isOn: $settings.notificationsEnabled.animation()) {
-                                Text("Daily notification")
-                            }
-                            if settings.notificationsEnabled {
-                                DatePicker("Time", selection: Binding(
-                                    get: { settings.notificationDate ?? Date() },
-                                    set: { settings.notificationDate = $0 }
-                                ),displayedComponents: .hourAndMinute)
-                                .padding(.top)
-                                
-                            }
-                        }
+        ZStack {
+
+            LinearGradient(
+                colors: gradientColors,
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            Form {
+
+                // 🔔 NOTIFICATIONS
+                Section {
+                    Toggle(isOn: $settings.notificationsEnabled.animation()) {
+                        Text("Daily notification")
                     }
-                    .listRowBackground(Color.gray.opacity(0.32))
-                    
-                    
-                    Picker(selection: $settings.currencyCode, label: Text("Currency")) {
-                        ForEach(["CZK", "EUR", "USD"], id: \.self) { currency in
-                            Text(currency)
-                        }
+
+                    if settings.notificationsEnabled {
+                        DatePicker(
+                            "Time",
+                            selection: Binding(
+                                get: { settings.notificationDate ?? Date() },
+                                set: { settings.notificationDate = $0 }
+                            ),
+                            displayedComponents: .hourAndMinute
+                        )
+                        .padding(.top)
                     }
-                    .pickerStyle(.automatic)
-                    .listRowBackground(Color.gray.opacity(0.32))
-                    
-                    
                 }
-                .navigationTitle("Settings")
-                .scrollDisabled(true)
-                .scrollContentBackground(.hidden)
-            
+                .listRowBackground(Color.gray.opacity(0.32))
+
+                // 💱 CURRENCY
+                Picker("Currency", selection: $settings.currencyCode) {
+                    ForEach(["CZK", "EUR", "USD"], id: \.self) {
+                        Text($0)
+                    }
+                }
+                .listRowBackground(Color.gray.opacity(0.32))
+            }
+            .navigationTitle("Settings")
+            .scrollContentBackground(.hidden)
+
+            // 👇 CATEGORY SECTION (mimo Form = žádné konflikty)
             VStack(alignment: .leading) {
-                
-                HStack{
+
+                HStack {
                     Text("Category")
                         .font(.headline)
-                        .padding(.leading)
-                    
+
                     Spacer()
-                    
+
                     Button("Add category") {
                         sheetMode = .add
-                    }.padding(.horizontal)
-                   /* .sheet(isPresented: $categorySheetOn, content: {
-                        
-                        AddCategoryView()
-                        
-                    })*/
-                    
+                    }
                 }
-                .padding(.bottom)
-                
+                .padding(.horizontal)
+                .padding(.bottom, 8)
 
-              //  CategoryIconView(selectedImage: $selectedImage, selectedImageName: $selectedImageName, contextMenuOn: $contextMenuOn)
-                
                 CategoryIconView(
                     selectedImage: $selectedImage,
                     selectedImageName: $selectedImageName,
@@ -113,27 +103,20 @@ struct SettingsView: View {
                 ) { category in
                     sheetMode = .edit(category)
                 }
-                    .padding(.horizontal)
-                
+                .padding(.horizontal)
             }
-            
-            
+            .padding(.top, 250) // doladíš dle layoutu
         }
         .sheet(item: $sheetMode) { mode in
             switch mode {
             case .add:
                 AddCategoryView()
-                    .environmentObject(cashViewModel)
 
             case .edit(let category):
-                AddCategoryView(
-                    editingCategory: category
-                )
-                .environmentObject(cashViewModel)
+                AddCategoryView(editingCategory: category)
             }
         }
     }
-        
 }
 
 #Preview {

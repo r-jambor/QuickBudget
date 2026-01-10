@@ -8,12 +8,12 @@
 import SwiftUI
 import SwiftData
 
-struct AmountDetailView: View {
+struct EditFinanceView: View {
     let gradientColors: [Color] = [
         .gradientTop,
         .gradientBottom
     ]
-    
+    @State var selectedCategory: CategoryModel?  
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
@@ -48,7 +48,7 @@ struct AmountDetailView: View {
             return Color.red.opacity(0.2)
         case "Savings":
             return Color.yellow.opacity(0.2)
-        case "Funds":
+        case "Income":
             return Color.green.opacity(0.2)
         default:
             return Color.gray.opacity(0.1)
@@ -75,7 +75,7 @@ struct AmountDetailView: View {
                 Picker(selection: $draft.type, label: Text("Picker")) {
                     Text("Expenses").tag("Expenses")
                     Text("Savings").tag("Savings")
-                    Text("Funds").tag("Funds")
+                    Text("Income").tag("Income")
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 300, height: 50)
@@ -212,7 +212,7 @@ struct AmountDetailView: View {
 }
 
 #Preview {
-    AmountDetailView(cashFlow: CashFlowModel(amount: 3.0, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")))
+    EditFinanceView(cashFlow: CashFlowModel(amount: 3.0, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")))
         .environmentObject(SettingsViewModel())
         .environmentObject(CashFlowViewModel())
 }
