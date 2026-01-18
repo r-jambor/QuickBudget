@@ -71,6 +71,7 @@ struct CategoryIconView: View {
                         Text(item.name)
                             .font(.caption)
                     }
+                    .frame(height: 100)
                 }
             }
             .padding(.horizontal)
@@ -78,14 +79,11 @@ struct CategoryIconView: View {
     }
 }
 
-/*#Preview {
+#Preview {
  
-    @State var selcetedImage = ""
-    @State var selcetedImageName = ""
+    @State var selectedImage = ""
+    @State var selectedImageName = ""
     @State var contextMenuOn: Bool = true
-    CategoryIconView(selectedImage: $selcetedImage, selectedImageName: $selcetedImageName, contextMenuOn: $contextMenuOn, onEdit: {_ in })
-        .environmentObject(CashFlowViewModel())
+    CategoryIconView(selectedImage: $selectedImage, selectedImageName: $selectedImageName, contextMenuOn: $contextMenuOn, onEdit: { _ in })
 }
-
-*/
 

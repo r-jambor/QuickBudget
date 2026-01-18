@@ -10,6 +10,8 @@ import SwiftUI
 
 struct AddFinanceView: View {
 
+    @Query private var categories: [CategoryModel]
+
     let gradientColors: [Color] = [
         .gradientTop,
         .gradientBottom,
@@ -27,14 +29,14 @@ struct AddFinanceView: View {
     @State private var errorMessage = ""
     @State private var contextMenuOn = false
     @State private var showBanner = false
-    
+
     @State private var categorySheetOn: Bool = false
 
     //SwiftData
     @Query var cashFlow: [CashFlowModel]
     @Environment(\.modelContext) var context
     @EnvironmentObject var settings: SettingsViewModel
-   // @EnvironmentObject var cashViewModel: CashFlowViewModel
+    // @EnvironmentObject var cashViewModel: CashFlowViewModel
 
     var colorAmountPicker: Color {
         switch pickerSelectionType {
@@ -94,17 +96,35 @@ struct AddFinanceView: View {
                 }
                 Text("Category")
                     .font(.headline)
-                    .padding()
+                    .padding(.top)
 
-                CategoryIconView(
-                    selectedImage: $selectedImage,
-                    selectedImageName: $selectedImageName,
-                    contextMenuOn: $contextMenuOn
-                ) { category in
-                    selectedCategory = category
-                    selectedImage = category.icon
-                    selectedImageName = category.name
-                    print("Kategorie vybrána: \(category.name)")
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .frame(width: 380, height: 90)
+                        .foregroundColor(.gradientTop)
+
+                    if categories.isEmpty {
+                        VStack(alignment: .leading) {
+                            Text("No category created")
+                            NavigationLink(
+                                "Go to settings",
+                                destination: SettingsView()
+                            )
+
+                        }
+                    } else {
+                        CategoryIconView(
+                            selectedImage: $selectedImage,
+                            selectedImageName: $selectedImageName,
+                            contextMenuOn: $contextMenuOn
+                        ) { category in
+                            selectedCategory = category
+                            selectedImage = category.icon
+                            selectedImageName = category.name
+                            print("Category selected: \(category.name)")
+                        }
+                        .offset(x: 0, y: 6)
+                    }
                 }
 
                 TextField("Note (optional)", text: $note)
@@ -128,66 +148,17 @@ struct AddFinanceView: View {
                     .padding()
                     .focused($amountIsFocused)
 
-               /* Button {
-                    guard let category = selectedCategory else {
-                        errorMessage = "No category has been selected"
-                        isShowingAlert = true
-                        return
-                    }
-                    if amount == 0.0 {
-                        isShowingAlert = true
-                        errorMessage = "No amount has been entered"
-
-                    } else if selectedImage == "" {
-                        isShowingAlert = true
-                        errorMessage = "No category has been selected"
-
-                    } else if pickerSelectionType == "" {
-                        isShowingAlert = true
-                        errorMessage =
-                            "No type of transaction has been selected"
-
-                    } else {
-                        let newCashFlow = CashFlowModel(
-                            amount: amount,
-                            date: date,
-                            type: pickerSelectionType,
-                            iconPicture: selectedImage,
-                            note: note,
-                            iconName: selectedImageName,
-                            category: category   //  reference
-                        )
-
-                        context.insert(newCashFlow)
-
-                        selectedImage = ""
-                        selectedImageName = ""
-                        amount = 0
-                        note = ""
-                        amountIsFocused = false
-                        pickerSelectionType = ""
-
-                        // pop up notification for succesfull data
-                        withAnimation {
-                            showBanner = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            withAnimation {
-                                showBanner = false
-                            }
-                        }
-                    }
-
-                }*/ Button {
+                Button {
                     // 1. Zrušení focusu klávesnice
                     amountIsFocused = false
-                    
+
                     // 2. Validace
                     if amount == 0 {
                         errorMessage = "No amount has been entered"
                         isShowingAlert = true
                     } else if pickerSelectionType.isEmpty {
-                        errorMessage = "No type of transaction has been selected"
+                        errorMessage =
+                            "No type of transaction has been selected"
                         isShowingAlert = true
                     } else if let category = selectedCategory {
                         // Vše je v pořádku - Ukládáme
@@ -195,34 +166,33 @@ struct AddFinanceView: View {
                             amount: amount,
                             date: date,
                             type: pickerSelectionType,
-                            iconPicture: category.icon, // bereme přímo z kategorie
+                            iconPicture: category.icon,  // bereme přímo z kategorie
                             note: note,
-                            iconName: category.name,   // bereme přímo z kategorie
+                            iconName: category.name,  // bereme přímo z kategorie
                             category: category
                         )
 
                         context.insert(newCashFlow)
-                        
+
                         // Reset polí
                         resetForm()
-                        
+
                         withAnimation {
                             showBanner = true
                         }
-                        
+
                         // Skrytí banneru
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             withAnimation { showBanner = false }
                         }
                     } else {
                         // Pokud selectedCategory je nil
-                        
-                        
+
                         errorMessage = "No category has been selected"
                         isShowingAlert = true
                     }
-                
-                }label: {
+
+                } label: {
                     Text("Save")
                         .font(.title)
                         .foregroundStyle(Color.blue)
@@ -254,7 +224,7 @@ struct AddFinanceView: View {
             amountIsFocused = false
         }
     }
-    
+
     private func resetForm() {
         selectedCategory = nil
         selectedImage = ""
@@ -268,7 +238,4 @@ struct AddFinanceView: View {
     AddFinanceView()
         .modelContainer(for: CashFlowModel.self, inMemory: true)
         .environmentObject(SettingsViewModel())
-       // .environmentObject(CashFlowViewModel())
 }
-
-

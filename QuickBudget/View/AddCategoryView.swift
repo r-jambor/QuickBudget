@@ -8,6 +8,16 @@
 import SwiftUI
 import SwiftData
 
+//
+//  AddCategoryView.swift
+//  QuickBudget
+//
+//  Created by Richard Jambor on 11/20/25.
+//
+
+import SwiftUI
+import SwiftData
+
 struct AddCategoryView: View {
 
     @Environment(\.modelContext) private var context
@@ -110,7 +120,8 @@ struct AddCategoryView: View {
 }
 
 #Preview {
-   // @State var selectedIcon: String = ""
+   
     AddCategoryView()
-      //  .environmentObject(CashFlowViewModel())
+      
 }
+

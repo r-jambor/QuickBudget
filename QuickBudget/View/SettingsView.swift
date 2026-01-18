@@ -96,13 +96,21 @@ struct SettingsView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 8)
 
-                CategoryIconView(
-                    selectedImage: $selectedImage,
-                    selectedImageName: $selectedImageName,
-                    contextMenuOn: $contextMenuOn
-                ) { category in
-                    sheetMode = .edit(category)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .frame(width: 380, height: 90)
+                        .foregroundColor(.gradientTop)
+                    
+                    CategoryIconView(
+                        selectedImage: $selectedImage,
+                        selectedImageName: $selectedImageName,
+                        contextMenuOn: $contextMenuOn
+                    ) { category in
+                        sheetMode = .edit(category)
+                    }
+                    .offset(x: 0, y: 6)
                 }
+                
                 .padding(.horizontal)
             }
             .padding(.top, 250) // doladíš dle layoutu
