@@ -14,27 +14,6 @@ struct RecentHistoryView: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject var settings: SettingsViewModel
 
-    var sampleList: [CashFlowModel] = [
-        CashFlowModel(
-            amount: 30,
-            date: Date(),
-            type: "Expenses",
-            iconPicture: "house.circle",
-            note: "",
-            iconName: "Test",
-            category: CategoryModel(name: "", icon: "")
-        ),
-        CashFlowModel(
-            amount: 30,
-            date: Date(),
-            type: "Expenses",
-            iconPicture: "house.circle",
-            note: "",
-            iconName: "Test",
-            category: CategoryModel(name: "", icon: "")
-        ),
-    ]
-
     var body: some View {
 
         let currentMonthItemsList = cashFlow.filter { item in
@@ -46,14 +25,11 @@ struct RecentHistoryView: View {
         }
 
         VStack {
-            List(currentMonthItemsList /*sampleList*/) { item in
+            List(currentMonthItemsList) { item in
 
                 Section {
                     HStack {
-             //old version without sync
-                    //    Image(systemName: item.iconPicture)
-             /*new version with sync*/
-                        Image(systemName: item.category.icon)
+                        Image(systemName: item.categoryIcon)
                             .resizable()
                             .frame(width: 50, height: 50)
                             //  .background(Color.red)
@@ -62,12 +38,11 @@ struct RecentHistoryView: View {
                         VStack(alignment: .leading) {
                             //old version
                            // Text("\(item.iconName)")
-                            Text(item.category.name)
+                            Text(item.categoryName)
                                 .font(.title3)
                             Text("\(item.type)")
                                 .font(.caption)
                         }
-
                         Spacer()
                         VStack(alignment: .trailing) {
                             Text(
@@ -77,19 +52,13 @@ struct RecentHistoryView: View {
                             Text("\(item.date, style: .date)")
                                 .font(.caption)
                         }
-
                     }
                 }
                 .listRowBackground(Color.gray.opacity(0.32))
-
-                //   .listRowInsets(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 15))
             }
-
             .scrollContentBackground(.hidden)
             .listSectionSpacing(10)
-
         }
-
     }
 }
 

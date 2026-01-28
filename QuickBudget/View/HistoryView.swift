@@ -18,13 +18,8 @@ struct HistoryView: View {
     var grouped: [String: [CashFlowModel]] {
             groupByMonth(cashFlow)
         }
-    var sample: [CashFlowModel] = [CashFlowModel(amount: 3000, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")),
-                                   CashFlowModel(amount: 30, date: .now, type: "Income", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")),
-                                   CashFlowModel(amount: 30, date: .now, type: "Savings", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: ""))]
+        
     
-    var groupedSample: [String: [CashFlowModel]] {
-            groupByMonth(sample)
-        }
     
     
     func totals(for month: String) -> (expenses: Double, savings: Double, income: Double) {

@@ -13,59 +13,44 @@ struct CategoryIconView: View {
     @Query(sort: \CategoryModel.name)
     private var categories: [CategoryModel]
 
-    @Environment(\.modelContext)
-    private var context
-    //@Binding var selectedCategory: CategoryModel?
     @Binding var selectedImage: String
     @Binding var selectedImageName: String
     @Binding var contextMenuOn: Bool
 
-    let onEdit: (CategoryModel) -> Void
+    @ViewBuilder
+    private func iconCircle(isSelected: Bool, systemName: String) -> some View {
+        let fillColor: Color = isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1)
+        let strokeColor: Color = isSelected ? Color.blue : .clear
 
+        Image(systemName: systemName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 55, height: 55)
+            .padding(10)
+            .background(
+                Circle()
+                    .fill(fillColor)
+            )
+            .overlay(
+                Circle().stroke(strokeColor, lineWidth: 2)
+            )
+    }
+
+    /// vrací PersistentIdentifier vybrané kategorie
+    let onSelect: (PersistentIdentifier?) -> Void
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
-                ForEach(categories) { item in
+                ForEach(categories, id: \.id) { item in
+                    let isSelected = (selectedImage == item.icon)
                     VStack {
-                        Image(systemName: item.icon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 55, height: 55)
-                            .padding(10)
-                            .background(
-                                Circle()
-                                    .fill(selectedImage == item.icon
-                                          ? Color.blue.opacity(0.2)
-                                          : Color.gray.opacity(0.1))
-                            )
-                            .overlay(
-                                Circle().stroke(
-                                    selectedImage == item.icon
-                                    ? Color.blue
-                                    : .clear,
-                                    lineWidth: 2
-                                )
-                            )
+                        iconCircle(isSelected: isSelected, systemName: item.icon)
+                            .contentShape(Circle())
                             .onTapGesture {
                                 selectedImage = item.icon
                                 selectedImageName = item.name
-                                onEdit(item)
-                            }
-                            .contextMenu {
-                                if contextMenuOn {
-                                    Button {
-                                        onEdit(item)
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-
-                                    Button(role: .destructive) {
-                                        context.delete(item)
-                                        
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
+                                onSelect(item.id)
                             }
 
                         Text(item.name)
@@ -79,11 +64,12 @@ struct CategoryIconView: View {
     }
 }
 
-#Preview {
+/*#Preview {
  
     @State var selectedImage = ""
     @State var selectedImageName = ""
     @State var contextMenuOn: Bool = true
     CategoryIconView(selectedImage: $selectedImage, selectedImageName: $selectedImageName, contextMenuOn: $contextMenuOn, onEdit: { _ in })
 }
+*/
 

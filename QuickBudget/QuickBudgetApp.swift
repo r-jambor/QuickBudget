@@ -16,7 +16,7 @@ struct QuickBudgetApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-                .modelContainer(for: [CashFlowModel.self])
+                .modelContainer(for: [CashFlowModel.self, CategoryModel.self])
                 .environmentObject(settings)
                 .preferredColorScheme(.dark)
         }

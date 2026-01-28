@@ -10,45 +10,42 @@ import SwiftData
 
 @Model
 class CashFlowModel: Identifiable {
-    var id = UUID()
+
+    var id: UUID = UUID()
     var amount: Double
     var date: Date
     var type: String
     var note: String
-    var iconPicture: String
-    var iconName: String
-    
-   
-    var icon: String? = nil
-    
-    // new data for the frequency transactions feature
-        var isRecurring: Bool = false
-        var nextDate: Date? = nil
-        var recurrenceFrequency: RecurrenceFrequency? = nil
-        var recurrenceEndDate: Date? = nil
-    
-    @Relationship
-    var category: CategoryModel
-    
-    
-    init(id: UUID = UUID(), amount: Double, date: Date, type: String, iconPicture: String, note: String, iconName: String, category: CategoryModel) {
-       
-    
+
+    // Category snapshot
+    var categoryName: String
+    var categoryIcon: String
+   // var categoryID: UUID?  // <-- tady místo PersistentIdentifier
+
+    var isRecurring: Bool = false
+    var nextDate: Date?
+    var recurrenceFrequency: RecurrenceFrequency?
+    var recurrenceEndDate: Date?
+
+    init(
+        amount: Double,
+        date: Date,
+        type: String,
+        note: String,
+      //  categoryID: UUID?,
+        categoryName: String,
+        categoryIcon: String
+    ) {
         self.amount = amount
         self.date = date
         self.type = type
-        self.iconPicture = iconPicture
         self.note = note
-        self.iconName = iconName
-        self.category = category
-        
+        //self.categoryID = categoryID
+        self.categoryName = categoryName
+        self.categoryIcon = categoryIcon
     }
-    
-    //options for the frequency transaction feature
+
     enum RecurrenceFrequency: String, Codable {
-        case daily
-        case weekly
-        case monthly
-        case yearly
+        case daily, weekly, monthly, yearly
     }
 }

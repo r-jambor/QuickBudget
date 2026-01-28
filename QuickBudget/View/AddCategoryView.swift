@@ -103,21 +103,32 @@ struct AddCategoryView: View {
     }
 
     private func saveCategory() {
+
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmedName.isEmpty else {
+            print("❌ Category name is empty")
+            return
+        }
+
         if let category = editingCategory {
-            category.name = name
+            category.name = trimmedName
             category.icon = selectedIcon
         } else {
             let newCategory = CategoryModel(
-                name: name,
+                name: trimmedName,
                 icon: selectedIcon
             )
             context.insert(newCategory)
         }
 
-        try? context.save()
-        dismiss()
-    }
-}
+        do {
+            try context.save()
+            dismiss()
+        } catch {
+            print("❌ Failed to save category:", error)
+        }
+    }}
 
 #Preview {
    

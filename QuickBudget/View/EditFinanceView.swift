@@ -9,220 +9,167 @@ import SwiftUI
 import SwiftData
 
 struct EditFinanceView: View {
-    let gradientColors: [Color] = [
-        .gradientTop,
-        .gradientBottom
-    ]
-    @State var selectedCategory: CategoryModel?  
+
+    let gradientColors: [Color] = [.gradientTop, .gradientBottom]
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
-    
+
     @Bindable var cashFlow: CashFlowModel
-    @State var contextMenuOn = false
-    @State private var draft: CashFlowDraft
+
+    @State private var contextMenuOn = false
     @State private var showBannerDetail = false
     @FocusState private var keyboardFocus: Bool
-    
+
     @EnvironmentObject var settings: SettingsViewModel
-  //  @EnvironmentObject var cashViewModel: CashFlowViewModel
-    
+
+    // 🔹 DRAFT – jen SNAPSHOT data
+    @State private var draft: CashFlowDraft
+
     init(cashFlow: CashFlowModel) {
         self._cashFlow = Bindable(wrappedValue: cashFlow)
-        
-        // Inicializace draftu z originálního modelu
-        self._draft = State(initialValue:
-            CashFlowDraft(
+
+        self._draft = State(
+            initialValue: CashFlowDraft(
                 type: cashFlow.type,
                 amount: cashFlow.amount,
                 note: cashFlow.note,
-                iconName: cashFlow.iconName,
-                iconPicture: cashFlow.iconPicture,
+                categoryName: cashFlow.categoryName,
+                categoryIcon: cashFlow.categoryIcon,
+               // categoryID: cashFlow.categoryID,
                 date: cashFlow.date
             )
         )
     }
-    
+
+    // MARK: - UI HELPERS
+
     var colorAmountPicker: Color {
         switch draft.type {
-        case "Expenses":
-            return Color.red.opacity(0.2)
-        case "Savings":
-            return Color.yellow.opacity(0.2)
-        case "Income":
-            return Color.green.opacity(0.2)
-        default:
-            return Color.gray.opacity(0.1)
+        case "Expenses": return .red.opacity(0.2)
+        case "Savings": return .yellow.opacity(0.2)
+        case "Income": return .green.opacity(0.2)
+        default: return .gray.opacity(0.1)
         }
     }
-    
+
+    // MARK: - BODY
+
     var body: some View {
         ZStack {
-            
-            
-            
-            // Background
+
             LinearGradient(
-                colors: [.gradientTop, .gradientBottom],
+                colors: gradientColors,
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-            
+
             VStack {
-                
+
                 // TYPE
                 Text("Type")
-                Picker(selection: $draft.type, label: Text("Picker")) {
+                Picker("Type", selection: $draft.type) {
                     Text("Expenses").tag("Expenses")
                     Text("Savings").tag("Savings")
                     Text("Income").tag("Income")
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 300, height: 50)
-                
+                .pickerStyle(.segmented)
+                .frame(width: 300)
+
                 // AMOUNT
                 Text("Amount")
-                
-                TextField("Enter amount", value: $draft.amount, format: .currency(code: settings.currencyCode))
-                    .font(.largeTitle)
-                    .padding(.vertical, 28)
-                    .padding(.horizontal)
-                    .frame(width: 340)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(colorAmountPicker)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                    )
-                    .keyboardType(.decimalPad)
-                    .focused($keyboardFocus)
-                
+                TextField(
+                    "Enter amount",
+                    value: $draft.amount,
+                    format: .currency(code: settings.currencyCode)
+                )
+                .font(.largeTitle)
+                .padding()
+                .frame(width: 340)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(colorAmountPicker)
+                )
+                .focused($keyboardFocus)
+
                 // CATEGORY
                 Text("Category")
                     .font(.headline)
-                
-         /*       CategoryIconView(
-                    selectedImage: $draft.iconPicture,
-                    selectedImageName: $draft.iconName, contextMenuOn: $contextMenuOn
-                )*/
-                
+
                 CategoryIconView(
-                    selectedImage: $draft.iconPicture,
-                    selectedImageName: $draft.iconName,
-                    contextMenuOn: $contextMenuOn
-                ) { category in
-
-                    // PŘEDVYPLNĚNÍ UI
-                //    cashViewModel.selectedIcon = category.icon
-                //    cashViewModel.categoryName = category.name
-
-                    // PŘEPNUTÍ DO EDIT REŽIMU
-                //    editingCategoryID = category.id
-               //     isEditing = true
-                }
-                
+                    selectedImage: $draft.categoryIcon,
+                    selectedImageName: $draft.categoryName,
+                    contextMenuOn: $contextMenuOn,
+                    onSelect: { categoryID in
+                        draft.categoryID = categoryID
+                    }
+                )
                 // NOTE
                 TextField("Note (optional)", text: $draft.note)
-                    .font(.title3)
-                    
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    .frame(width: 320)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.gray.opacity(0.3))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                    )
                     .padding()
-                    
+                    .frame(width: 320)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
                     .focused($keyboardFocus)
-                
+
                 // DATE
-                Form {
-                    Section {
-                        DatePicker("Date", selection: $draft.date, displayedComponents: .date)
-                    }
-                    .listRowBackground(Color.gray.opacity(0.1))
-                }
-                .scrollContentBackground(.hidden)
-                .frame(width: 420, height: 100)
-                .scrollDisabled(true)
-                .padding(.bottom)
-                
-                // SAVE BUTTON
-                Button {
+                DatePicker("Date", selection: $draft.date, displayedComponents: .date)
+                    .padding()
+
+                // SAVE
+                Button("Save") {
                     saveChanges()
-                } label: {
-                    Text("Save")
-                        .font(.title)
-                        .foregroundStyle(Color.blue)
-                        .frame(width: 200, height: 50)
-                        .background(Color.gradientTop)
-                        .cornerRadius(12)
                 }
-                
+                .font(.title)
+                .frame(width: 200, height: 50)
+                .background(Color.gradientTop)
+                .cornerRadius(12)
             }
             .padding()
-            // Banner
-            DataAddedBannerView(text: "Edited", isVisible: $showBannerDetail)
+
+            DataAddedBannerView(
+                text: "Edited",
+                isVisible: $showBannerDetail
+            )
         }
-        .gesture(
-            DragGesture()
-                .onEnded { value in
-                    if value.translation.height > 50 {
-                        keyboardFocus = false
-                    }
-                }
-        )
-        .onTapGesture {
-            keyboardFocus = false
-        }
+        .onTapGesture { keyboardFocus = false }
     }
-    
-    
-    // MARK: - SAVE FUNCTION
+
+    // MARK: - SAVE
+
     private func saveChanges() {
-        // Přepis hodnot z draftu do originálu
         cashFlow.type = draft.type
         cashFlow.amount = draft.amount
         cashFlow.note = draft.note
-        cashFlow.iconName = draft.iconName
-        cashFlow.iconPicture = draft.iconPicture
+        cashFlow.categoryName = draft.categoryName
+        cashFlow.categoryIcon = draft.categoryIcon
         cashFlow.date = draft.date
-        
+
         try? context.save()
-        
-        withAnimation {
-            showBannerDetail = true
-        }
-        
+
+        withAnimation { showBannerDetail = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-                showBannerDetail = false
-            }
+            withAnimation { showBannerDetail = false }
         }
-        
-      //  dismiss()
     }
 }
 
-#Preview {
+/*#Preview {
     EditFinanceView(cashFlow: CashFlowModel(amount: 3.0, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")))
         .environmentObject(SettingsViewModel())
       //  .environmentObject(CashFlowViewModel())
-}
+}*/
 
 
 struct CashFlowDraft {
     var type: String
     var amount: Double
     var note: String
-    var iconName: String
-    var iconPicture: String
+
+    var categoryName: String
+    var categoryIcon: String
+    var categoryID: PersistentIdentifier?
+
     var date: Date
 }

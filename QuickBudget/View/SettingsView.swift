@@ -15,6 +15,9 @@ struct SettingsView: View {
         .gradientBottom
     ]
 
+    @Query(sort: \CategoryModel.name)
+    private var categories: [CategoryModel]
+    
     @EnvironmentObject var settings: SettingsViewModel
 
     @State private var selectedImage: String = ""
@@ -32,7 +35,7 @@ struct SettingsView: View {
             case .add:
                 return "add"
             case .edit(let category):
-                return category.id.uuidString
+                return String(describing: category.id)
             }
         }
     }
@@ -104,10 +107,19 @@ struct SettingsView: View {
                     CategoryIconView(
                         selectedImage: $selectedImage,
                         selectedImageName: $selectedImageName,
-                        contextMenuOn: $contextMenuOn
-                    ) { category in
-                        sheetMode = .edit(category)
-                    }
+                        contextMenuOn: $contextMenuOn,
+                        onSelect: { categoryID in
+                            guard let categoryID else { return }
+
+                            guard let category = categories.first(
+                                where: { $0.persistentModelID == categoryID }
+                            ) else {
+                                return
+                            }
+
+                            sheetMode = .edit(category)
+                        }
+                    )
                     .offset(x: 0, y: 6)
                 }
                 
