@@ -19,7 +19,8 @@ struct SettingsView: View {
     private var categories: [CategoryModel]
     
     @EnvironmentObject var settings: SettingsViewModel
-
+    @State private var editingCategory: CategoryModel? = nil
+    @State private var showCategorySheet = false
     @State private var selectedImage: String = ""
     @State private var selectedImageName: String = ""
     @State private var contextMenuOn = true
@@ -108,15 +109,8 @@ struct SettingsView: View {
                         selectedImage: $selectedImage,
                         selectedImageName: $selectedImageName,
                         contextMenuOn: $contextMenuOn,
-                        onSelect: { categoryID in
-                            guard let categoryID else { return }
-
-                            guard let category = categories.first(
-                                where: { $0.persistentModelID == categoryID }
-                            ) else {
-                                return
-                            }
-
+                        onEdit: { category in
+                            // nastavujeme sheetMode pro otevření AddCategoryView v režimu edit
                             sheetMode = .edit(category)
                         }
                     )
@@ -131,7 +125,6 @@ struct SettingsView: View {
             switch mode {
             case .add:
                 AddCategoryView()
-
             case .edit(let category):
                 AddCategoryView(editingCategory: category)
             }

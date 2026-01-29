@@ -11,52 +11,62 @@ import SwiftData
 struct CategoryIconView: View {
 
     @Query(sort: \CategoryModel.name)
-    private var categories: [CategoryModel]
+    private var categories: [CategoryModel]  // SwiftData
 
     @Binding var selectedImage: String
     @Binding var selectedImageName: String
     @Binding var contextMenuOn: Bool
 
-    @ViewBuilder
-    private func iconCircle(isSelected: Bool, systemName: String) -> some View {
-        let fillColor: Color = isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1)
-        let strokeColor: Color = isSelected ? Color.blue : .clear
+    @Environment(\.modelContext) private var context
 
-        Image(systemName: systemName)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 55, height: 55)
-            .padding(10)
-            .background(
-                Circle()
-                    .fill(fillColor)
-            )
-            .overlay(
-                Circle().stroke(strokeColor, lineWidth: 2)
-            )
-    }
-
-    /// vrací PersistentIdentifier vybrané kategorie
-    let onSelect: (PersistentIdentifier?) -> Void
+    /// Callback pro edit kategorii
+    let onEdit: (CategoryModel) -> Void
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
                 ForEach(categories, id: \.id) { item in
-                    let isSelected = (selectedImage == item.icon)
                     VStack {
-                        iconCircle(isSelected: isSelected, systemName: item.icon)
-                            .contentShape(Circle())
+                        Image(systemName: item.icon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 55, height: 55)
+                            .padding(10)
+                            .background(
+                                Circle()
+                                    .fill(selectedImage == item.icon ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(selectedImage == item.icon ? Color.blue : .clear, lineWidth: 2)
+                            )
                             .onTapGesture {
+                                // Výběr kategorie
                                 selectedImage = item.icon
                                 selectedImageName = item.name
-                                onSelect(item.id)
+                            }
+                            .contextMenu {
+                                if contextMenuOn {
+                                    // Edit
+                                    Button {
+                                        onEdit(item)
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+
+                                    // Delete přes SwiftData
+                                    Button(role: .destructive) {
+                                        context.delete(item)
+                                        try? context.save()
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                             }
 
                         Text(item.name)
                             .font(.caption)
                     }
-                    .frame(height: 100)
                 }
             }
             .padding(.horizontal)
@@ -73,3 +83,14 @@ struct CategoryIconView: View {
 }
 */
 
+struct IconCategoryModel: Identifiable, Codable {
+    let id: UUID
+    var icon: String
+    var name: String
+
+    init(id: UUID = UUID(), icon: String, name: String) {
+        self.id = id
+        self.icon = icon
+        self.name = name
+    }
+}

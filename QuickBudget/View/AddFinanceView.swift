@@ -97,8 +97,9 @@ struct AddFinanceView: View {
                             selectedImage: $selectedImage,
                             selectedImageName: $selectedImageName,
                             contextMenuOn: $contextMenuOn,
-                            onSelect: { categoryID in
-                                selectedCategoryID = categoryID
+                            onEdit: { category in
+                                // Pokud nechceš nic dělat při edit v AddFinanceView, nech to prázdné
+                                print("Edit category tapped: \(category.name)")
                             }
                         )
                         .offset(x: 0, y: 6)
@@ -159,13 +160,7 @@ struct AddFinanceView: View {
             return
         }
 
-      /*  guard let categoryUUIDString = selectedCategoryID?.description,
-              let categoryUUID = UUID(uuidString: categoryUUIDString),
-              !selectedImageName.isEmpty else {
-            errorMessage = "No category has been selected"
-            isShowingAlert = true
-            return
-        }*/
+     
 
         // Vytvoření CashFlowModel
         let newCashFlow = CashFlowModel(
@@ -204,9 +199,5 @@ struct AddFinanceView: View {
         .modelContainer(for: CashFlowModel.self, inMemory: true)
         .environmentObject(SettingsViewModel())
 }
-#Preview {
-    AddFinanceView()
-        .modelContainer(for: CashFlowModel.self, inMemory: true)
-        .environmentObject(SettingsViewModel())
-}
+
 

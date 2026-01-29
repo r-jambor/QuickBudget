@@ -100,10 +100,10 @@ struct EditFinanceView: View {
                 CategoryIconView(
                     selectedImage: $draft.categoryIcon,
                     selectedImageName: $draft.categoryName,
-                    contextMenuOn: $contextMenuOn,
-                    onSelect: { categoryID in
-                        draft.categoryID = categoryID
-                    }
+                    contextMenuOn: $contextMenuOn, onEdit: { category in
+                        print("Edit category tapped: \(category.name)")
+                    },
+                    
                 )
                 // NOTE
                 TextField("Note (optional)", text: $draft.note)

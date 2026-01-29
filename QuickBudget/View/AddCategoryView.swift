@@ -82,14 +82,17 @@ struct AddCategoryView: View {
             TextField("Category name", text: $name)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
-
-            Button(editingCategory == nil ? "Add" : "Save") {
+            
+            Button {
                 saveCategory()
+            } label : {
+                Text(editingCategory == nil ? "Add" : "Save")
+                    .frame(width: 200, height: 50)
+                    .background(Color.blue.opacity(0.25))
+                    .cornerRadius(14)
+                    .font(.title2)
             }
-            .font(.title2)
-            .frame(width: 200, height: 50)
-            .background(Color.blue.opacity(0.25))
-            .cornerRadius(14)
+            
 
             Spacer()
         }
