@@ -21,7 +21,6 @@ struct AddFinanceView: View {
 
     // MARK: - UI States
     let gradientColors: [Color] = [.gradientTop, .gradientBottom]
-
     @State private var pickerSelectionType: String = ""
     @State private var note: String = ""
     @State private var amount: Double = 0
@@ -84,7 +83,7 @@ struct AddFinanceView: View {
                 Text("Category").font(.headline)
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .frame(width: 380, height: 90)
+                        .frame(width: 380, height: 115)
                         .foregroundColor(.gradientTop)
 
                     if categories.isEmpty {
@@ -94,6 +93,7 @@ struct AddFinanceView: View {
                         }
                     } else {
                         CategoryIconView(
+                            selectedCategoryID: $selectedCategoryID,
                             selectedImage: $selectedImage,
                             selectedImageName: $selectedImageName,
                             contextMenuOn: $contextMenuOn,
@@ -156,6 +156,12 @@ struct AddFinanceView: View {
 
         guard !pickerSelectionType.isEmpty else {
             errorMessage = "No type of transaction has been selected"
+            isShowingAlert = true
+            return
+        }
+        
+        guard amount > 0 else {
+            errorMessage = "No amount has been entered"
             isShowingAlert = true
             return
         }

@@ -48,6 +48,7 @@ struct MonthDetailView: View {
                     }
                     .onDelete(perform: deleteItems)
                 }
+                .listSectionSpacing(10)
                 .scrollContentBackground(.hidden)
             }
         }
@@ -92,15 +93,15 @@ struct MonthDetailView: View {
     }
 }
 
-/*#Preview {
+#Preview {
     // Create sample data for preview
     let sampleTransactions = [
-        CashFlowModel(amount: 2.0, date: .now, type: "Expenses", iconPicture: "house.circle", note: "test", iconName: "Living", category: CategoryModel(name: "", icon: "")),
-        CashFlowModel(amount: 2.0, date: .now, type: "Expenses", iconPicture: "house.circle", note: "test", iconName: "Living", category: CategoryModel(name: "", icon: ""))
+        CashFlowModel(amount: 2.0, date: Date(), type: "", note: "", categoryName: "", categoryIcon: ""),
+        CashFlowModel(amount: 2.0, date: Date(), type: "", note: "", categoryName: "", categoryIcon: "")
     ]
     
     MonthDetailView(transactions: sampleTransactions)
         .modelContainer(for: CashFlowModel.self, inMemory: true)
         .environmentObject(SettingsViewModel())
 }
-*/
+

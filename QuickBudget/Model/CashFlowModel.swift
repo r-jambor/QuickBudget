@@ -17,7 +17,10 @@ class CashFlowModel: Identifiable {
     var type: String
     var note: String
 
+    
+    
     // Category snapshot
+    //var categoryID: PersistentIdentifier?
     var categoryName: String
     var categoryIcon: String
    // var categoryID: UUID?  // <-- tady místo PersistentIdentifier

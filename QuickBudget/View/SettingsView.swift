@@ -26,6 +26,7 @@ struct SettingsView: View {
     @State private var contextMenuOn = true
     @State var selectedCategory: CategoryModel?  
     @State private var sheetMode: CategorySheetMode?
+    @State private var selectedCategoryID: PersistentIdentifier?
 
     enum CategorySheetMode: Identifiable {
         case add
@@ -102,10 +103,11 @@ struct SettingsView: View {
 
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .frame(width: 380, height: 90)
+                        .frame(width: 380, height: 115)
                         .foregroundColor(.gradientTop)
                     
                     CategoryIconView(
+                        selectedCategoryID: $selectedCategoryID,
                         selectedImage: $selectedImage,
                         selectedImageName: $selectedImageName,
                         contextMenuOn: $contextMenuOn,

@@ -16,7 +16,9 @@ struct EditFinanceView: View {
     @Environment(\.modelContext) private var context
 
     @Bindable var cashFlow: CashFlowModel
-
+    
+    @State private var selectedCategoryID: PersistentIdentifier?
+    
     @State private var contextMenuOn = false
     @State private var showBannerDetail = false
     @FocusState private var keyboardFocus: Bool
@@ -29,6 +31,9 @@ struct EditFinanceView: View {
     init(cashFlow: CashFlowModel) {
         self._cashFlow = Bindable(wrappedValue: cashFlow)
 
+        // Pokud chceš jen, aby se správně vybral item v CategoryIconView, použij nil nebo find podle názvu/ikony
+        self._selectedCategoryID = State(initialValue: nil)
+        
         self._draft = State(
             initialValue: CashFlowDraft(
                 type: cashFlow.type,
@@ -76,7 +81,7 @@ struct EditFinanceView: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 300)
-
+                .padding(.bottom)
                 // AMOUNT
                 Text("Amount")
                 TextField(
@@ -85,46 +90,71 @@ struct EditFinanceView: View {
                     format: .currency(code: settings.currencyCode)
                 )
                 .font(.largeTitle)
-                .padding()
+                .padding(.vertical, 28)
+                .padding(.horizontal)
                 .frame(width: 340)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(colorAmountPicker)
                 )
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.4), lineWidth: 1))
+                .keyboardType(.decimalPad)
                 .focused($keyboardFocus)
 
                 // CATEGORY
                 Text("Category")
                     .font(.headline)
-
-                CategoryIconView(
-                    selectedImage: $draft.categoryIcon,
-                    selectedImageName: $draft.categoryName,
-                    contextMenuOn: $contextMenuOn, onEdit: { category in
-                        print("Edit category tapped: \(category.name)")
-                    },
-                    
-                )
+                    .padding(.top)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .frame(width: 380, height: 115)
+                        .foregroundColor(.gradientTop)
+                    CategoryIconView(
+                        selectedCategoryID: $selectedCategoryID,
+                        selectedImage: $draft.categoryIcon,
+                        selectedImageName: $draft.categoryName,
+                        contextMenuOn: $contextMenuOn, onEdit: { category in
+                            print("Edit category tapped: \(category.name)")
+                        },
+                        
+                    )
+                }
+                .padding(.bottom)
                 // NOTE
+                Text("Note")
                 TextField("Note (optional)", text: $draft.note)
+                    
                     .padding()
                     .frame(width: 320)
-                    .background(Color.gray.opacity(0.2))
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.gray.opacity(0.1)))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.4), lineWidth: 1))
                     .cornerRadius(10)
                     .focused($keyboardFocus)
+             
 
                 // DATE
-                DatePicker("Date", selection: $draft.date, displayedComponents: .date)
-                    .padding()
+                Form {
+                                    Section {
+                                        DatePicker("Date", selection: $draft.date, displayedComponents: .date)
+                                    }
+                                    .listRowBackground(Color.gray.opacity(0.1))
+                                }
+                .scrollContentBackground(.hidden)
+                                .frame(width: 420, height: 100)
+                                .scrollDisabled(true)
+                                .padding(.bottom)
+                                .padding(.bottom)
 
                 // SAVE
-                Button("Save") {
+                Button {
                     saveChanges()
+                } label : {
+                    Text("Save")
+                        .frame(width: 200, height: 50)
+                        .background(Color.gradientTop)
+                        .cornerRadius(14)
+                        .font(.title)
                 }
-                .font(.title)
-                .frame(width: 200, height: 50)
-                .background(Color.gradientTop)
-                .cornerRadius(12)
             }
             .padding()
 
@@ -145,7 +175,7 @@ struct EditFinanceView: View {
         cashFlow.categoryName = draft.categoryName
         cashFlow.categoryIcon = draft.categoryIcon
         cashFlow.date = draft.date
-
+       // cashFlow.categoryID = selectedCategoryID
         try? context.save()
 
         withAnimation { showBannerDetail = true }
@@ -155,11 +185,11 @@ struct EditFinanceView: View {
     }
 }
 
-/*#Preview {
-    EditFinanceView(cashFlow: CashFlowModel(amount: 3.0, date: .now, type: "Expenses", iconPicture: "", note: "", iconName: "", category: CategoryModel(name: "", icon: "")))
+#Preview {
+    EditFinanceView(cashFlow: CashFlowModel(amount: 2.0, date: Date(), type: "Income", note: "test", categoryName: "question", categoryIcon: "test"))
         .environmentObject(SettingsViewModel())
       //  .environmentObject(CashFlowViewModel())
-}*/
+}
 
 
 struct CashFlowDraft {
@@ -173,3 +203,4 @@ struct CashFlowDraft {
 
     var date: Date
 }
+
